@@ -3,12 +3,24 @@
   "version": "1.0.0",
   "description": "blog backend in node js ",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js"
   },
   "author": "Ashutosh kumar",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.21.2"
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "server": "file:"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.17.0",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "eslint": "^9.17.0",
+    "globals": "^15.14.0"
   }
 }

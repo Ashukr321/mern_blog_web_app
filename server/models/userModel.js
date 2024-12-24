@@ -25,6 +25,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     enum: ['admin', 'user'],
     default: 'user',
+   
   },
 
   // Optional user profile information
@@ -32,18 +33,22 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: null,
   },
+
   firstName: {
     type: String,
     default: null,
   },
+
   lastName: {
     type: String,
     default: null,
   },
+
   bio: {
     type: String,
     default: null,
   },
+
   location: {
     type: String,
     default: null,

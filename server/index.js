@@ -4,6 +4,7 @@ import envConfig from './config/envConfig.js';
 import cors from 'cors';
 import connectDb from './config/connectDb.js';
 import globalErrorHandler from './middleware/globalErrorHandler.js';
+import userRoute from './routes/userRoutes.js';
 // create server 
 const app = express();
 
@@ -20,9 +21,11 @@ app.use(cors(
 // parse request in to body 
 app.use(express.json());
 
-// create routes 
-
-
+// create routes 🚀
+// baseurl 
+const baseApiUlr = '/api/v1';
+// user routes
+app.use(`${baseApiUlr}/user`,userRoute);
 
 //  handle error 
 app.use(globalErrorHandler);

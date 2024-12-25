@@ -87,3 +87,11 @@
 [0mGET /api/v1/user/logout [32m200[0m 24.270 ms - 61[0m
 [0mGET /api/v1/user/logout [32m200[0m 36.460 ms - 53[0m
 [0mGET /api/v1/user/logout [32m200[0m 6.895 ms - 44[0m
+[0mGET /api/v1/user/logout [32m200[0m 18.421 ms - 44[0m
+[0mGET /api/v1/user/deleteAccount [33m404[0m 2.126 ms - 164[0m
+[0mGET /api/v1/user/deleteAccount [33m404[0m 4.318 ms - 164[0m
+[0mGET /api/v1/user/deleteAccount [32m200[0m 37.582 ms - 44[0m
+[0mGET /api/v1/user/deleteAccount [32m200[0m 4.645 ms - 44[0m
+[0mPOST /api/v1/user/login [32m200[0m 2953.423 ms - 237[0m
+[0mPOST /api/v1/user/verifyUser [32m200[0m 5.183 ms - 73[0m
+[0mGET /api/v1/user/deleteAccount [32m200[0m 7.262 ms - 66[0m

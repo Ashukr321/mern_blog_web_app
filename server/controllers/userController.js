@@ -1,9 +1,10 @@
 import User from "../models/userModel.js";
-import { welcomeMailOptions,otpMailOptions } from '../utils/mailOptions.js'
+import { welcomeMailOptions,otpMailOptions,accountDeleteMailOptions } from '../utils/mailOptions.js'
 import transporter from "../utils/mailTransport.js";
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import envConfig from '../config/envConfig.js';
+import { tracingChannel } from "diagnostics_channel";
 // create user 
 const registerUser = async (req, res, next) => {
   try {
@@ -181,6 +182,31 @@ const logout = async(req,res,next)=>{
     return next(error);
   }
 }
+// deleteAccount 
+const deleteAccount = async(req,res,next)=>{
+  try{
+
+      // get user 
+    const user = await User.findById(req.userId);
+    // check user exist or not
+    if(!user){
+      const err = new Error();
+      err.status = 401;
+      err.message = "User not found";
+      return next(err);
+    }
+    // send mail
+    await transporter.sendMail(accountDeleteMailOptions(user.email));
+    // delete user 
+    await user.deleteOne();
+    res.status(200).json({
+        success: true,
+        message: "User deleted successfully",
+    })
+  }catch(error){
+    return next(error);
+  }
+}
 //  generate top 6 digit 
 const generateOTP = (length = 6) => {
   const min = 100000;
@@ -189,4 +215,4 @@ const generateOTP = (length = 6) => {
   return code.toString();
 }
 
-export { registerUser,loginUser,verifyUser,logout }
+export { registerUser,loginUser,verifyUser,logout ,deleteAccount}

@@ -41,4 +41,24 @@ const otpMailOptions = (email, otp) => {
     `
   }
 }
-export {welcomeMailOptions,otpMailOptions}
+
+// account delete 
+const accountDeleteMailOptions = (email) => {
+  return {
+    from: `${configEnv.smtp_email}`,
+    to: email,
+    subject: 'Account Deleted',
+    html: `
+    <div style="font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f4;">
+        <h2 style="color: #333;">Account Deleted</h2>
+        <p style="color: #555;">Your account has been deleted.</p>
+        <p style="color: #555;">If you did not delete your account, please contact our support team.</p>
+        <p style="color: #555;">Best regards,<br>Your Company Name</p>
+        <footer style="margin-top: 20px; font-size: 12px; color: #aaa;">
+            <p>This email was sent to you because you deleted your account.</p>
+        </footer>
+    </div>
+    `,
+  }
+}
+export {welcomeMailOptions,otpMailOptions,accountDeleteMailOptions}

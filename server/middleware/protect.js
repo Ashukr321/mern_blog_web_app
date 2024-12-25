@@ -12,7 +12,6 @@ const protect = async(req,res,next)=>{
     }
     // decoded 
     const decoded = jwt.verify(token,envConfig.jwt_secret);
-    console.log(decoded);
     req.userId =await decoded.userId;
 
     const user = await User.findById(req.userId);

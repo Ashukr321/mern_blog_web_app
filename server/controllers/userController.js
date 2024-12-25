@@ -157,6 +157,30 @@ const verifyUser = async (req,res,next)=>{
     return next(error);
   }
 }
+
+// logout 
+const logout = async(req,res,next)=>{
+  try{
+
+    const user = await User.findById(req.userId);
+    if(!user){
+      const err = new Error();
+      err.status = 401;
+      err.message = "User not found";
+      return next(err);
+    }
+    // make verified false
+    user.verified = false;
+    res.clearCookie('token');
+    await user.save();
+    res.status(200).json({
+        success: true,
+        message: "User logout successfully",
+    })
+  }catch(error){
+    return next(error);
+  }
+}
 //  generate top 6 digit 
 const generateOTP = (length = 6) => {
   const min = 100000;
@@ -165,4 +189,4 @@ const generateOTP = (length = 6) => {
   return code.toString();
 }
 
-export { registerUser,loginUser,verifyUser }
+export { registerUser,loginUser,verifyUser,logout }

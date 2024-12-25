@@ -7,6 +7,7 @@ import globalErrorHandler from './middleware/globalErrorHandler.js';
 import userRoute from './routes/userRoutes.js';
 import morgan from 'morgan';
 import fs from 'fs';
+import cookieParser from 'cookie-parser';
 // create server 
 const app = express();
 
@@ -18,6 +19,7 @@ app.use(cors(
     origin : "*"
   }
 ));
+app.use(cookieParser());
 
 
 // parse request in to body 

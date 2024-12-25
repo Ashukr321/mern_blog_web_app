@@ -1,44 +1,39 @@
-import jwt from 'jsonwebtoken';
-import envConfig from '../config/envConfig.js';
+import jwt from 'jsonwebtoken'
 import User from '../models/userModel.js';
-
-// Middleware to protect routes
-const protect = async (req, res, next) => {
+import envConfig from '../config/envConfig.js';
+const protect = async(req,res,next)=>{
   try {
-    // Extract token from the Authorization header
-    const token = req.headers.authorization;
-
-    // Check if token is provided
-    if (!token) {
-      const err = new Error("Unauthorized");
-      err.status = 401; // Set status code to 401 for unauthorized access
-      return next(err); // Pass the error to the next middleware
+    const token = await req.headers.authorization.split(" ")[1];
+    if(!token){
+      const err = new Error();
+      err.status = 401;
+      err.message = "Token is required";
+      return next(err);
     }
+    // decoded 
+    const decoded = jwt.verify(token,envConfig.jwt_secret);
+    console.log(decoded);
+    req.userId =await decoded.userId;
 
-    // Verify the token using the secret key
-    const decodedToken = jwt.verify(token, envConfig.jwt_secret);
+    const user = await User.findById(req.userId);
+   
 
-    // Check if the user exists in the database
-    const user = await User.findById(decodedToken.userId);
-    if (!user) {
-      const err = new Error("Unauthorized");
-      err.status = 401; // Set status code to 401 for unauthorized access
-      return next(err); // Pass the error to the next middleware
+    if(!user){
+      const err = new Error();
+      err.status = 401;
+      err.message = "User not found";
     }
-
-    // Check if the user has verified their account
-    if (!user.verified) {
-      const err = new Error("Please verify your account");
-      err.status = 401; // Set status code to 401 for unauthorized access
-      return next(err); // Pass the error to the next middleware
+    // check verified or not 
+    if(!user.verified){
+      const err = new Error();
+      err.status = 401;
+      err.message = "User not verified";
+      return next(err);
     }
-
-    // If all checks pass, proceed to the next middleware
+    
     return next();
   } catch (error) {
-    // Handle any errors that occur during the process
-    return next(error); // Pass the error to the next middleware
+    return next(error);
   }
 }
-
 export default protect;

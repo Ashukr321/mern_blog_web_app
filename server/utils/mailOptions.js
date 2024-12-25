@@ -21,4 +21,24 @@ const welcomeMailOptions = (email, userName) => {
     `,
   }
 }
-export {welcomeMailOptions}
+
+// send otp mail
+const otpMailOptions = (email, otp) => {
+  return {
+    from: `${configEnv.smtp_email}`,
+    to: email,
+    subject: 'OTP for login' ,
+    html: `
+    <div style="font-family: Arial
+    , sans-serif; padding: 20px; background-color: #f4f4f4;">
+    <h2 style="color: #333;">OTP for login</h2>
+    <p style="color: #555;">Your OTP is: ${otp}</p>
+    
+    <p style="color: #555;">Please use this OTP to log in to your account.</p>
+    <p style="color: #555;">If you did not request this OTP, please ignore this email.</p>
+    <p style="color: #555;">Best regards,<br>Your Company Name</p>
+    <footer style="margin-top: 20px; font-size: 12px; color: #aaa;">
+    `
+  }
+}
+export {welcomeMailOptions,otpMailOptions}

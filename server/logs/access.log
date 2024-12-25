@@ -1,0 +1,4 @@
+[0mPOST /api/v1/user/login [33m404[0m 2.530 ms - 157[0m
+[0mPOST /api/v1/user/login [32m200[0m 71.576 ms - 56[0m
+[0mPOST /api/v1/user/login [32m200[0m 5325.238 ms - 237[0m
+[0mPOST /api/v1/user/login [32m200[0m 3895.893 ms - 237[0m

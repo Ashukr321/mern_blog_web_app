@@ -74,7 +74,21 @@ const userSchema = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User ',
     }
-  ]
+  ],
+  // otp options
+  otp: {
+    type: String,
+    default: null,
+  },
+  otpExpire: {
+    type: Date,
+    default: null,
+  },
+  verifyOtp: {
+    type: Boolean,
+    default: false,
+  }
+  
 }, {
   timestamps: true, // Automatically manage createdAt and updatedAt fields
 });

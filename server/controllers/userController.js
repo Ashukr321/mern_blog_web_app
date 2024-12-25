@@ -113,7 +113,50 @@ const loginUser = async (req, res, next) => {
   }
 }
 
+// verifyUser 
+const verifyUser = async (req,res,next)=>{
+  try {
+    const {email,otp} =req.body;
+    const user = await User.findOne({email});
+    // check user exist or not
+    if(!user){
+      const err = new Error();
+      err.status = 401;
+      err.message = "User not found";
+      return next(err);
+    }
+    // verify Otp 
+    if(user.otp !== otp){
+      const err = new Error();
+      err.status = 401;
+      err.message = "Invalid OTP";
+      return next(err);
+    }
+    // check otp expire or not
+    if(user.otpExpire < Date.now()){
+        const err = new Error();
+        err.status = 401;
+        err.message = "OTP expired";
+        return next(err);
+    }
+    // reset otp and otp expire
+    user.otp = null;
+    user.otpExpire = null;
+    // we have to make false when logout
+    user.verified = true;
+    // save user
+    await user.save();
 
+    // send response
+    res.status(200).json({
+      success: true,
+      message: "User verified successfully,Now you can login",
+    })
+
+  } catch (error) {
+    return next(error);
+  }
+}
 //  generate top 6 digit 
 const generateOTP = (length = 6) => {
   const min = 100000;
@@ -122,4 +165,4 @@ const generateOTP = (length = 6) => {
   return code.toString();
 }
 
-export { registerUser,loginUser }
+export { registerUser,loginUser,verifyUser }

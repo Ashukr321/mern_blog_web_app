@@ -84,7 +84,7 @@ const userSchema = new mongoose.Schema({
     type: Date,
     default: null,
   },
-  verifyOtp: {
+  verified: {
     type: Boolean,
     default: false,
   }

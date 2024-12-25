@@ -2,3 +2,13 @@
 [0mPOST /api/v1/user/login [32m200[0m 71.576 ms - 56[0m
 [0mPOST /api/v1/user/login [32m200[0m 5325.238 ms - 237[0m
 [0mPOST /api/v1/user/login [32m200[0m 3895.893 ms - 237[0m
+[0mPOST /api/v1/user/login [32m200[0m 3828.549 ms - 237[0m
+[0mPOST /api/v1/user/verifyUser [32m200[0m 20.313 ms - 73[0m
+[0mPOST /api/v1/user/verifyUser [32m200[0m 2.393 ms - 38[0m
+[0mPOST /api/v1/user/verifyUser [32m200[0m 2.262 ms - 38[0m
+[0mPOST /api/v1/user/verifyUser [32m200[0m 3.034 ms - 38[0m
+[0mPOST /api/v1/user/login [32m200[0m 2770.165 ms - 237[0m
+[0mPOST /api/v1/user/verifyUser [32m200[0m 8.517 ms - 73[0m
+[0mPOST /api/v1/user/register [32m200[0m 3668.046 ms - 240[0m
+[0mPOST /api/v1/user/login [32m200[0m 3638.651 ms - 237[0m
+[0mPOST /api/v1/user/verifyUser [32m200[0m 17.784 ms - 73[0m

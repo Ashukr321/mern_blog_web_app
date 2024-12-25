@@ -10,7 +10,8 @@ const envConfig = {
   smtp_email:process.env.SMTP_EMAIL,
   smtp_password:process.env.SMTP_PASSWORD,
   jwt_secret:process.env.JWT_SECRET,
-  jwt_expires:process.env.JWT_EXPIRES
+  jwt_expires:process.env.JWT_EXPIRES,
+  node_env:process.env.NODE_ENV,
 }
 
 export default envConfig;

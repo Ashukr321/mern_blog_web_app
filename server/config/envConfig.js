@@ -12,6 +12,7 @@ const envConfig = {
   jwt_secret:process.env.JWT_SECRET,
   jwt_expires:process.env.JWT_EXPIRES,
   node_env:process.env.NODE_ENV,
+  client_url:process.env.CLIENT_URL,
 }
 
 export default envConfig;

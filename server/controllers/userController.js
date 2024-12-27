@@ -1,10 +1,9 @@
 import User from "../models/userModel.js";
-import { welcomeMailOptions,otpMailOptions,accountDeleteMailOptions } from '../utils/mailOptions.js'
+import { welcomeMailOptions,otpMailOptions,accountDeleteMailOptions,forgetPasswordMailOptions } from '../utils/mailOptions.js'
 import transporter from "../utils/mailTransport.js";
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import envConfig from '../config/envConfig.js';
-import { tracingChannel } from "diagnostics_channel";
 // create user 
 const registerUser = async (req, res, next) => {
   try {
@@ -207,6 +206,41 @@ const deleteAccount = async(req,res,next)=>{
     return next(error);
   }
 }
+
+// forget password 
+const forgetPassword = async(req,res,next)=>{
+  // token 
+  // token sent to email
+  try{
+    // get email 
+    const {email} = req.body;
+    // check user exist or not
+    const user = await User.findOne({email});
+    // check user Exits or not 
+    if(!user){
+      const err = new Error();
+      err.status = 401;
+      err.message = "User not found";
+      return next(err);
+    }
+    // generate resetToken 
+    const resetToken = await user.createPasswordToken();
+    // url 
+    const resetUrl = `${envConfig.client_url}/reset-password/${resetToken}`;
+    // send mail
+    await transporter.sendMail(forgetPasswordMailOptions(email,resetUrl));
+
+    res.status(200).json({
+      success: true,
+      message: "Password reset link sent successfully",
+    })
+
+  }catch(error){
+    return next(error);
+  }
+
+}
+
 //  generate top 6 digit 
 const generateOTP = (length = 6) => {
   const min = 100000;
@@ -215,4 +249,4 @@ const generateOTP = (length = 6) => {
   return code.toString();
 }
 
-export { registerUser,loginUser,verifyUser,logout ,deleteAccount}
+export { registerUser,loginUser,verifyUser,logout ,deleteAccount,forgetPassword}

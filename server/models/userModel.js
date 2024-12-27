@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-
+import crypto from "crypto";
 // Create userSchema for user management
 const userSchema = new mongoose.Schema({
   // Basic user information
@@ -87,11 +87,32 @@ const userSchema = new mongoose.Schema({
   verified: {
     type: Boolean,
     default: false,
+  },
+  
+  resetPasswordToken: {
+    type: String,
+    default: null,
+  },
+  // Reset password token expiration time
+  resetPasswordExpire: {
+    type: Date,
+    default: null,
   }
   
 }, {
   timestamps: true, // Automatically manage createdAt and updatedAt fields
 });
+
+
+
+// create resetPasswordToken and 
+userSchema.methods.createPasswordToken = function(){
+  const resetToken = crypto.randomBytes(32).toString('hex');
+  this.resetPasswordToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+  this.resetPasswordExpire = Date.now() + 10 * 60 * 1000;// 10 min
+  return resetToken;
+}
+
 
 // Create User model from the schema
 const User = mongoose.model('User ', userSchema);

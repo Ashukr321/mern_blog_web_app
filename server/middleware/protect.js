@@ -22,6 +22,7 @@ const protect = async(req,res,next)=>{
       err.status = 401;
       err.message = "User not found";
     }
+    // console.log(user.verified)
     // check verified or not 
     if(!user.verified){
       const err = new Error();
@@ -29,7 +30,7 @@ const protect = async(req,res,next)=>{
       err.message = "User not verified";
       return next(err);
     }
-    
+
     return next();
   } catch (error) {
     return next(error);

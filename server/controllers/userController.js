@@ -1,9 +1,10 @@
 import User from "../models/userModel.js";
-import { welcomeMailOptions,otpMailOptions,accountDeleteMailOptions,forgetPasswordMailOptions } from '../utils/mailOptions.js'
+import { welcomeMailOptions, otpMailOptions, accountDeleteMailOptions, forgetPasswordMailOptions } from '../utils/mailOptions.js'
 import transporter from "../utils/mailTransport.js";
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import envConfig from '../config/envConfig.js';
+import crypto from 'crypto';
 // create user 
 const registerUser = async (req, res, next) => {
   try {
@@ -89,17 +90,17 @@ const loginUser = async (req, res, next) => {
     }
 
     //  generate otp 
-    const otpCode =  generateOTP();
+    const otpCode = generateOTP();
     // save Otp to userCollections 
     user.otp = otpCode;
     // 10 min timeout
-    user.otpExpire= Date.now() + 1000 * 60 * 5;
+    user.otpExpire = Date.now() + 1000 * 60 * 5;
     // send otp to user email
     await transporter.sendMail(otpMailOptions(email, otpCode));
     // save user
     await user.save();
     // Sign Token 
-    const token = jwt.sign({ userId : user._id }, envConfig.jwt_secret, { expiresIn: envConfig.jwt_expires });
+    const token = jwt.sign({ userId: user._id }, envConfig.jwt_secret, { expiresIn: envConfig.jwt_expires });
 
     // send response
     res.status(200).json({
@@ -114,30 +115,30 @@ const loginUser = async (req, res, next) => {
 }
 
 // verifyUser 
-const verifyUser = async (req,res,next)=>{
+const verifyUser = async (req, res, next) => {
   try {
-    const {email,otp} =req.body;
-    const user = await User.findOne({email});
+    const { email, otp } = req.body;
+    const user = await User.findOne({ email });
     // check user exist or not
-    if(!user){
+    if (!user) {
       const err = new Error();
       err.status = 401;
       err.message = "User not found";
       return next(err);
     }
     // verify Otp 
-    if(user.otp !== otp){
+    if (user.otp !== otp) {
       const err = new Error();
       err.status = 401;
       err.message = "Invalid OTP";
       return next(err);
     }
     // check otp expire or not
-    if(user.otpExpire < Date.now()){
-        const err = new Error();
-        err.status = 401;
-        err.message = "OTP expired";
-        return next(err);
+    if (user.otpExpire < Date.now()) {
+      const err = new Error();
+      err.status = 401;
+      err.message = "OTP expired";
+      return next(err);
     }
     // reset otp and otp expire
     user.otp = null;
@@ -159,11 +160,11 @@ const verifyUser = async (req,res,next)=>{
 }
 
 // logout 
-const logout = async(req,res,next)=>{
-  try{
+const logout = async (req, res, next) => {
+  try {
 
     const user = await User.findById(req.userId);
-    if(!user){
+    if (!user) {
       const err = new Error();
       err.status = 401;
       err.message = "User not found";
@@ -174,21 +175,21 @@ const logout = async(req,res,next)=>{
     res.clearCookie('token');
     await user.save();
     res.status(200).json({
-        success: true,
-        message: "User logout successfully",
+      success: true,
+      message: "User logout successfully",
     })
-  }catch(error){
+  } catch (error) {
     return next(error);
   }
 }
 // deleteAccount 
-const deleteAccount = async(req,res,next)=>{
-  try{
+const deleteAccount = async (req, res, next) => {
+  try {
 
-      // get user 
+    // get user 
     const user = await User.findById(req.userId);
     // check user exist or not
-    if(!user){
+    if (!user) {
       const err = new Error();
       err.status = 401;
       err.message = "User not found";
@@ -199,25 +200,25 @@ const deleteAccount = async(req,res,next)=>{
     // delete user 
     await user.deleteOne();
     res.status(200).json({
-        success: true,
-        message: "User deleted successfully",
+      success: true,
+      message: "User deleted successfully",
     })
-  }catch(error){
+  } catch (error) {
     return next(error);
   }
 }
 
 // forget password 
-const forgetPassword = async(req,res,next)=>{
+const forgetPassword = async (req, res, next) => {
   // token 
   // token sent to email
-  try{
+  try {
     // get email 
-    const {email} = req.body;
+    const { email } = req.body;
     // check user exist or not
-    const user = await User.findOne({email});
+    const user = await User.findOne({ email });
     // check user Exits or not 
-    if(!user){
+    if (!user) {
       const err = new Error();
       err.status = 401;
       err.message = "User not found";
@@ -228,17 +229,110 @@ const forgetPassword = async(req,res,next)=>{
     // url 
     const resetUrl = `${envConfig.client_url}/reset-password/${resetToken}`;
     // send mail
-    await transporter.sendMail(forgetPasswordMailOptions(email,resetUrl));
+    await transporter.sendMail(forgetPasswordMailOptions(email, resetUrl));
 
     res.status(200).json({
       success: true,
       message: "Password reset link sent successfully",
     })
 
-  }catch(error){
+  } catch (error) {
     return next(error);
   }
 
+}
+
+// reset password 
+const resetPassword = async (req, res, next) => {
+  try {
+    // get token 
+    const { token } = req.params;
+    // get password 
+    const { password, confirmPassword } = req.body;
+
+    if (password !== confirmPassword) {
+      const err = new Error();
+      err.status = 401;
+      err.message = "Password and confirm password not matched";
+      return next(err);
+    }
+    // check token valid or not
+    const hashedToken = crypto.createHash('sha256').update(toString(token)).digest('hex');
+
+    // find user
+    const user = await User.findById(req.userId);
+    // check user exist or not
+    if (!user) {
+      const err = new Error();
+      err.status = 401;
+      err.message = "User not found ";
+      return next(err);
+    }
+
+    if (user.passwordResetToken !== hashedToken) {
+      const err = new Error();
+      err.status = 401;
+      err.message = "Invalid token";
+      return next(err);
+    }
+
+    // check token expire or not
+    if (user.passwordResetTokenExpire < Date.now()) {
+      const err = new Error();
+      err.status = 401;
+      err.message = "Token expired , Resend the Reset Link";
+      return next(err);
+    }
+
+    //hashed password 
+    const hashedPassword = await bcrypt.hash(password, 10);
+    // update password
+    user.password = hashedPassword;
+    user.passwordResetToken = null;
+    user.passwordResetTokenExpire = null;
+    // save user
+    await user.save();
+    res.status(200).json({
+      success: true,
+      message: "Password reset successfully",
+    })
+
+  } catch (error) {
+    return next(error);
+  }
+
+}
+
+// profileInfo 
+const profileInfo = async(req,res,next)=>{
+  try {
+    const user = await User.findById(req.userId);
+    if(!user){
+      const err = new Error();
+      err.status = 401;
+      err.message = "User not found";
+      return next(err);
+    }
+     const userProfile = {
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      bio:user.bio,
+      profileImage: user.profilePhoto,
+      location: user.location,
+      socialLinks:user.socialLinks,
+      followers: user.followers,
+      following: user.following,
+     }
+    res.status(200).json({
+      success: true,
+      userProfile
+    })
+  } catch (error) {
+    return next(error);
+  }
 }
 
 //  generate top 6 digit 
@@ -249,4 +343,4 @@ const generateOTP = (length = 6) => {
   return code.toString();
 }
 
-export { registerUser,loginUser,verifyUser,logout ,deleteAccount,forgetPassword}
+export { registerUser, loginUser, verifyUser, logout, deleteAccount, forgetPassword,resetPassword,profileInfo }

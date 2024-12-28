@@ -1,6 +1,6 @@
 import express from 'express';
 const router = express.Router();
-import {registerUser,loginUser,verifyUser,logout,deleteAccount,forgetPassword,resetPassword,profileInfo} from '../controllers/userController.js'
+import {registerUser,loginUser,verifyUser,logout,deleteAccount,forgetPassword,resetPassword,profileInfo,updateProfile} from '../controllers/userController.js'
 import protect from '../middleware/protect.js';
 
 
@@ -12,4 +12,6 @@ router.get('/deleteAccount',protect,deleteAccount);
 router.post('/forget-password',protect,forgetPassword);
 router.post('/reset-password',protect,resetPassword);
 router.get('/profile',protect,profileInfo);
+router.patch('/updateProfile',protect,updateProfile);
+
 export default router;

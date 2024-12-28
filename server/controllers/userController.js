@@ -335,7 +335,53 @@ const profileInfo = async(req,res,next)=>{
   }
 }
 
-//  generate top 6 digit 
+
+//  update profile
+const updateProfile =async(req,res,next)=>{
+  try {
+    const {userName,firstName,lastName,bio,location,socialLinks} = req.body;
+    const user = await User.findById(req.userId);
+  
+    if(!user){
+      const err = new Error();
+      err.status = 401;
+      err.message = "User not found";
+    }
+    if(userName){
+      user.userName = userName;
+    }
+    if(firstName){
+      user.firstName = firstName;
+    }
+    if(lastName){
+      user.lastName = lastName
+    }
+    if(bio){
+      user.bio = bio;
+    }
+    if(location){
+      user.location = location;
+    }
+    if(socialLinks){
+      user.socialLinks = socialLinks;
+    }
+    await user.save();
+    res.status(200).json({
+      success: true,
+      message: "Profile updated successfully",
+    })
+  } catch (error) {
+    return next(error)
+  }
+}
+
+
+
+
+
+
+
+//  generate top 6 dig   t 
 const generateOTP = (length = 6) => {
   const min = 100000;
   const max = 999999;
@@ -343,4 +389,4 @@ const generateOTP = (length = 6) => {
   return code.toString();
 }
 
-export { registerUser, loginUser, verifyUser, logout, deleteAccount, forgetPassword,resetPassword,profileInfo }
+export { registerUser, loginUser, verifyUser, logout, deleteAccount, forgetPassword,resetPassword,profileInfo,updateProfile }

@@ -62,19 +62,7 @@ const userSchema = new mongoose.Schema({
     }
   ],
 
-  // Followers and following relationships
-  followers: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User ',
-    }
-  ],
-  following: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User ',
-    }
-  ],
+ 
   // otp options
   otp: {
     type: String,

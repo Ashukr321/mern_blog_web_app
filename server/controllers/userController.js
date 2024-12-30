@@ -5,6 +5,8 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import envConfig from '../config/envConfig.js';
 import crypto from 'crypto';
+import { v2 as cloudinary } from 'cloudinary';
+import fs from 'fs';
 // create user 
 const registerUser = async (req, res, next) => {
   try {
@@ -307,6 +309,8 @@ const resetPassword = async (req, res, next) => {
 // profileInfo 
 const profileInfo = async(req,res,next)=>{
   try {
+
+   
     const user = await User.findById(req.userId);
     if(!user){
       const err = new Error();
@@ -314,6 +318,8 @@ const profileInfo = async(req,res,next)=>{
       err.message = "User not found";
       return next(err);
     }
+   
+
      const userProfile = {
       name: user.name,
       email: user.email,
@@ -321,11 +327,10 @@ const profileInfo = async(req,res,next)=>{
       firstName: user.firstName,
       lastName: user.lastName,
       bio:user.bio,
-      profileImage: user.profilePhoto,
+      profilePhoto: user.profilePhoto,
       location: user.location,
       socialLinks:user.socialLinks,
-      followers: user.followers,
-      following: user.following,
+      
      }
     res.status(200).json({
       success: true,
@@ -342,7 +347,7 @@ const updateProfile =async(req,res,next)=>{
   try {
     const {userName,firstName,lastName,bio,location,socialLinks} = req.body;
     const user = await User.findById(req.userId);
-  
+    
     if(!user){
       const err = new Error();
       err.status = 401;
@@ -366,6 +371,18 @@ const updateProfile =async(req,res,next)=>{
     if(socialLinks){
       user.socialLinks = socialLinks;
     }
+    cloudinary.config({
+      cloud_name: envConfig.cloudinary_cloud_name,
+      api_key: envConfig.cloudinary_api_key,
+      api_secret: envConfig.cloudinary_api_secret,
+    });
+
+    const result = await cloudinary.uploader.upload(req.file.path,{
+      folder:"blog_user_profile"
+    });
+    fs.unlinkSync(req.file.path);
+    user.profilePhoto = result.secure_url;
+
     await user.save();
     res.status(200).json({
       success: true,
@@ -375,6 +392,7 @@ const updateProfile =async(req,res,next)=>{
     return next(error)
   }
 }
+
 
 
 

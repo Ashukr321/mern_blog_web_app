@@ -8,7 +8,6 @@ import envConfig from '../config/envConfig.js';
 const createBlog = async(req,res)=>{
   try{
     const {title,content} = req.body;
-
     // config cloudinary
     cloudinary.config({
       cloud_name: envConfig.cloudinary_cloud_name,
@@ -38,6 +37,27 @@ const createBlog = async(req,res)=>{
     console.log(error);
   }
 };
-// 
 
-export {createBlog}
+// getAllBlogs
+const getAllBlogs = async (req,res,next)=>{
+  try{
+    // find all blogs check blog present or not 
+    const blogs = await Blog.find();
+    if(blogs.length === 0){
+      const err  = new Error();
+      err.message = "No blog found";
+      err.statusCode = 404;
+      return next(err);
+    }
+
+    res.status(200).json({
+      success: true,
+      blogs
+    })
+    // send blog 
+  }catch(error){
+    return next(error);
+  }
+}
+
+export {createBlog,getAllBlogs}

@@ -1,0 +1,1 @@
+//upload profile photo and blog photo

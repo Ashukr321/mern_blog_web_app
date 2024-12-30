@@ -10,6 +10,9 @@ const blogSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  blogPhoto: {
+    type: String,
+  },
   // reference to the user who created the blog
   author: {
     type: mongoose.Schema.Types.ObjectId,
@@ -34,5 +37,5 @@ const blogSchema = new mongoose.Schema({
 
 });
 
-const Blog = await mongoose.create("Blogs", blogSchema);
+const Blog = mongoose.model("Blog", blogSchema);
 export default Blog;

@@ -1,7 +1,7 @@
 import User from "../models/userModel.js";
 import { welcomeMailOptions, otpMailOptions, accountDeleteMailOptions, forgetPasswordMailOptions } from '../utils/mailOptions.js'
 import transporter from "../utils/mailTransport.js";
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import envConfig from '../config/envConfig.js';
 import crypto from 'crypto';
@@ -24,6 +24,7 @@ const registerUser = async (req, res, next) => {
     if (!password) {
       throw new Error("Password is required");
     }
+    
 
     // check if user name already exist or not
     const useExist = await User.findOne({ email: email });

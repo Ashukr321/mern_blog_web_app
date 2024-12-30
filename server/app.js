@@ -5,6 +5,7 @@ import cors from 'cors';
 import connectDb from './config/connectDb.js';
 import globalErrorHandler from './middleware/globalErrorHandler.js';
 import userRoute from './routes/userRoutes.js';
+import blogRoute from './routes/blogRoutes.js';
 import morgan from 'morgan';
 import fs from 'fs';
 import cookieParser from 'cookie-parser';
@@ -35,6 +36,7 @@ if(envConfig.node_env=="development"){
 const baseApiUlr = '/api/v1';
 // user routes
 app.use(`${baseApiUlr}/user`,userRoute);
+app.use(`${baseApiUlr}/blog`,blogRoute);
 
 //  handle error 
 app.use(globalErrorHandler);

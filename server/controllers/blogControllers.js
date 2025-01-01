@@ -49,7 +49,6 @@ const getAllBlogs = async (req,res,next)=>{
       err.statusCode = 404;
       return next(err);
     }
-
     res.status(200).json({
       success: true,
       blogs
@@ -60,4 +59,28 @@ const getAllBlogs = async (req,res,next)=>{
   }
 }
 
-export {createBlog,getAllBlogs}
+
+// getBlogById 
+const getBlogById = async (req,res,next)=>{
+  try {
+    const blogId =  req.params.id;
+    // find blog by id 
+    const blog = await Blog.findById({_id:blogId});
+    // check blog present or not
+    if(!blog){
+      const err = new Error();
+      err.status = 404;
+      err.message = "Blog not found";
+      return next(err);
+    }
+    // send blog
+    res.status(200).json({
+      blog
+    })
+  } catch (error) {
+    return next(error);
+  }
+}
+
+
+export {createBlog,getAllBlogs,getBlogById}

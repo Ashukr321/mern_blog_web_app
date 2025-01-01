@@ -7,6 +7,9 @@ import envConfig from '../config/envConfig.js';
 import crypto from 'crypto';
 import { v2 as cloudinary } from 'cloudinary';
 import fs from 'fs';
+
+
+
 // create user 
 const registerUser = async (req, res, next) => {
   try {
@@ -407,5 +410,9 @@ const generateOTP = (length = 6) => {
   const code = Math.floor(Math.random() * (max - min + 1) + min);
   return code.toString();
 }
+
+
+//  user documentation: 
+
 
 export { registerUser, loginUser, verifyUser, logout, deleteAccount, forgetPassword,resetPassword,profileInfo,updateProfile }

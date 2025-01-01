@@ -1,10 +1,10 @@
 import Blog from '../models/blogModel.js';
 import { v2 as cloudinary } from 'cloudinary';
 import fs from 'fs';
-
+import { ObjectId } from 'mongodb';
 import envConfig from '../config/envConfig.js';
 
-
+// create blog 1
 const createBlog = async(req,res)=>{
   try{
     const {title,content} = req.body;
@@ -38,7 +38,7 @@ const createBlog = async(req,res)=>{
   }
 };
 
-// getAllBlogs
+// 2 getAllBlogs
 const getAllBlogs = async (req,res,next)=>{
   try{
     // find all blogs check blog present or not 
@@ -60,7 +60,7 @@ const getAllBlogs = async (req,res,next)=>{
 }
 
 
-// getBlogById 
+// 3. getBlogById 
 const getBlogById = async (req,res,next)=>{
   try {
     const blogId =  req.params.id;
@@ -83,4 +83,102 @@ const getBlogById = async (req,res,next)=>{
 }
 
 
-export {createBlog,getAllBlogs,getBlogById}
+
+// Admin task 
+// 4. updateBlog (blogPhoto, title, content)
+const updateBlog = async (req, res, next) => {
+  try {
+    // Extract the blog ID from the request parameters
+    const blogId = req.params.id;
+   
+    // Find the blog by its ID
+    const blog = await Blog.findById({ _id: blogId });
+
+    
+
+    // Check if the blog exists; if not, return a 404 error
+    if (!blog) {
+      const err = new Error("Blog not found");
+      err.status = 404;
+      return next(err);
+    }
+    
+   // Convert req.userId to ObjectId for comparison
+    const userIdObjectId = new ObjectId(req.userId);
+    // Check if the user is the author of the blog
+
+    if (!blog.author.equals(userIdObjectId)) {
+      const err = new Error("You are not authorized to update this blog");
+      err.status = 403;
+      return next(err);
+  }
+
+    // Configure Cloudinary for image uploads
+    cloudinary.config({
+      cloud_name: envConfig.cloudinary_cloud_name,
+      api_key: envConfig.cloudinary_api_key,
+      api_secret: envConfig.cloudinary_api_secret,
+    });
+
+    // Determine if a new photo has been uploaded
+    const isPhotoUpdated = req.file ? true : false;
+    let result;
+
+    // If a new photo is uploaded, handle the upload to Cloudinary
+    if (isPhotoUpdated) {
+      result = await cloudinary.uploader.upload(req.file.path, {
+        folder: "blogPhotos"
+      });
+      // Clean up the local file after uploading to Cloudinary
+      fs.unlinkSync(req.file.path);
+    }
+    
+    // Extract updated data from the request body
+    const { title, content } = req.body;
+    console.log(`New title: ${title}, New content: ${content}`);
+
+    // Update the blog's properties with new data
+    blog.title = title;
+    blog.content = content;
+    // Update the blog photo URL if a new photo was uploaded
+    blog.blogPhoto = isPhotoUpdated ? result.secure_url : blog.blogPhoto;
+
+    // Save the updated blog document to the database
+    await blog.save();
+    
+    // Send a success response back to the client
+    res.status(200).json({
+      success: true,
+      message: "Blog updated successfully"
+    });
+    
+  } catch (error) {
+    // Pass any errors to the error handling middleware
+    return next(error);
+  }
+}
+
+// Admin get their created blog 
+const getBlogByAdmin = async(req,res,next)=>{
+  try{
+    // find all  blogs check blog present or not
+    const blogs = await Blog.find({author:req.userId});
+    if(blogs.length === 0){
+      const err  = new Error();
+      err.message = "No blog found";
+      err.statusCode = 404;
+      return next(err);
+    }
+    res.status(200).json({
+      success: true,
+      blogs
+    })
+
+  }catch(error){
+    return next(error);
+  }
+}
+
+
+// delete the blog (Admin only do this )
+export {createBlog,getAllBlogs,getBlogById,updateBlog}

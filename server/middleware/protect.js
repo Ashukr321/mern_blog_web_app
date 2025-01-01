@@ -1,39 +1,42 @@
-import jwt from 'jsonwebtoken'
+import jwt from 'jsonwebtoken';
 import User from '../models/userModel.js';
 import envConfig from '../config/envConfig.js';
-const protect = async(req,res,next)=>{
+
+const protect = async (req, res, next) => {
   try {
-    const token = await req.headers.authorization.split(" ")[1];
-    if(!token){
-      const err = new Error();
+    const token = req.headers.authorization?.split(" ")[1]; // Use optional chaining to avoid errors if authorization is undefined
+    if (!token) {
+      const err = new Error("Token is required");
       err.status = 401;
-      err.message = "Token is required";
       return next(err);
     }
-    // decoded 
-    const decoded = jwt.verify(token,envConfig.jwt_secret);
-    console.log(decoded);
-    req.userId =await decoded.userId;
 
+    // Decode the token
+    const decoded = jwt.verify(token, envConfig.jwt_secret);
+    const id = decoded.userId; // No need to use await here, as decoded is already the result
+    req.userId = id;
+
+    // Find the user by ID
     const user = await User.findById(req.userId);
-   
 
-    if(!user){
-      const err = new Error();
+    if (!user) {
+      const err = new Error("User  not found");
       err.status = 401;
-      err.message = "User not found";
+      return next(err); // Call next with the error
     }
-    // check verified or not 
-    if(!user.verified){
-      const err = new Error();
+
+    // Check if the user is verified
+    if (!user.verified) {
+      const err = new Error("User  not verified");
       err.status = 401;
-      err.message = "User not verified";
-      return next(err);
+      return next(err); // Call next with the error
     }
-    
+
+    // If everything is fine, proceed to the next middleware
     return next();
   } catch (error) {
-    return next(error);
+    return next(error); // Pass any other errors to the error handler
   }
-}
+};
+
 export default protect;

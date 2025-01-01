@@ -2,7 +2,7 @@ import express from 'express';
 const router = express.Router();
 import multer from 'multer';
 
- import { createBlog,getAllBlogs,getBlogById,updateBlog ,getAdminBlog,deleteBlogById} from '../controllers/blogControllers.js';
+ import { createBlog,getAllBlogs,getBlogById,updateBlog ,getAdminBlog,deleteBlogById,deleteBlogs} from '../controllers/blogControllers.js';
 import protect from '../middleware/protect.js';
 import isAdmin from '../middleware/isAdmin.js';
 
@@ -27,6 +27,7 @@ router.put('/update/:id',protect,isAdmin,upload.single("blogPhoto"),updateBlog);
 
 // delete blog by admin 
 router.delete('/deleteBlog/:id',protect,isAdmin,deleteBlogById);
+router.delete('/deleteBlogs',protect,isAdmin,deleteBlogs);
 
 
 export default router

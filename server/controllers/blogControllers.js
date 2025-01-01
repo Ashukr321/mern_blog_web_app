@@ -160,7 +160,7 @@ const updateBlog = async (req, res, next) => {
 
 
 
-// Admin get their created blog 
+// 5 Admin get their created blog 
 const getAdminBlog = async (req, res, next) => {
   try {
     
@@ -185,7 +185,7 @@ const getAdminBlog = async (req, res, next) => {
 };
 
 
-// delete the blog (Admin only do this )
+// 6 delete the blog (Admin only do this )
 const deleteBlogById= async (req,res,next)=>{
   try{
     // get blog id 
@@ -220,4 +220,31 @@ const deleteBlogById= async (req,res,next)=>{
     return next(error);
   }
 }
-export {createBlog,getAllBlogs,getBlogById,updateBlog,getAdminBlog,deleteBlogById}
+
+// deleteBlogs (Admin only do this )
+const deleteBlogs = async(req,res,next)=>{
+  try{
+    // find all blogs of admin and delete them
+    const blogList = await  Blog.find({author:req.userId});
+    // check blog is present or not
+    if(blogList.length==0){
+      const err = new Error();
+      err.message = "No blog found";
+      err.statusCode = 404;
+      return next(err);
+    }
+    // delete all blogs
+    await Blog.deleteMany({author:req.userId});
+    // send success response
+    res.status(200).json({
+      success:true,
+      message:"Blog deleted successfully"
+    })
+
+  }catch(error){
+    return next(error);
+  }
+}
+
+
+export {createBlog,getAllBlogs,getBlogById,updateBlog,getAdminBlog,deleteBlogById,deleteBlogs}

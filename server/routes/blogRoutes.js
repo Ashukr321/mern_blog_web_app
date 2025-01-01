@@ -2,7 +2,7 @@ import express from 'express';
 const router = express.Router();
 import multer from 'multer';
 
- import { createBlog,getAllBlogs,getBlogById,updateBlog } from '../controllers/blogControllers.js';
+ import { createBlog,getAllBlogs,getBlogById,updateBlog ,getAdminBlog} from '../controllers/blogControllers.js';
 import protect from '../middleware/protect.js';
 import isAdmin from '../middleware/isAdmin.js';
 
@@ -19,10 +19,14 @@ const storage = multer.diskStorage({
 const upload = multer({storage:storage});
 
 router.post('/createBlog',protect,isAdmin,upload.single("blogPhoto"),createBlog);
+router.get('/getAdminBlogs',protect,isAdmin,getAdminBlog)
+
 
 router.get('/getAllBlogs',getAllBlogs);
 router.get('/:id',getBlogById);
-router.post('/update/:id',protect,isAdmin,upload.single("blogPhoto"),updateBlog);
+router.put('/update/:id',protect,isAdmin,upload.single("blogPhoto"),updateBlog);
+
+
 
 
 export default router

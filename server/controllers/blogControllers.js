@@ -50,6 +50,7 @@ const getAllBlogs = async (req,res,next)=>{
       return next(err);
     }
     res.status(200).json({
+      total:blogs.length,
       success: true,
       blogs
     })
@@ -81,7 +82,6 @@ const getBlogById = async (req,res,next)=>{
     return next(error);
   }
 }
-
 
 
 // Admin task 
@@ -158,27 +158,32 @@ const updateBlog = async (req, res, next) => {
   }
 }
 
+
+
 // Admin get their created blog 
-const getBlogByAdmin = async(req,res,next)=>{
-  try{
-    // find all  blogs check blog present or not
-    const blogs = await Blog.find({author:req.userId});
-    if(blogs.length === 0){
-      const err  = new Error();
+const getAdminBlog = async (req, res, next) => {
+  try {
+    
+    const blogs = await Blog.find({ author: req.userId });
+   
+    if(!blog.length==0) {
+      const err = new Error();
       err.message = "No blog found";
       err.statusCode = 404;
       return next(err);
     }
+
     res.status(200).json({
+      total:blogs.length,
       success: true,
       blogs
-    })
+    });
 
-  }catch(error){
+  } catch (error) {
     return next(error);
   }
-}
+};
 
 
 // delete the blog (Admin only do this )
-export {createBlog,getAllBlogs,getBlogById,updateBlog}
+export {createBlog,getAllBlogs,getBlogById,updateBlog,getAdminBlog}

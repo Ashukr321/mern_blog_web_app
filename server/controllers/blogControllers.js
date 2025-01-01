@@ -82,6 +82,42 @@ const getBlogById = async (req,res,next)=>{
     return next(error);
   }
 }
+// blog likes 
+const likeBlog = async (req, res, next) => {
+  try {
+    const blogId = req.params.id;
+    const userId = req.userId;
+    // Find the blog by its ID
+    const blog = await Blog.findById(blogId);
+    // Check if the blog exists
+    if (!blog) {
+      const err = new Error("Blog not found");
+      err.status = 404;
+      return next(err);
+    }
+   
+    // Check if the user has already liked the blog
+    if (blog.likes.includes(userId)) {
+     // User has already liked the blog, so remove the like
+      blog.likes = blog.likes.filter(id => id.toString() !== userId.toString());
+    }else {
+      // User has not liked the blog, so add the like
+      blog.likes.push(userId);
+    }
+    
+    // Save the updated blog
+    await blog.save();
+    // Send the updated blog as a response
+    res.status(200).json({
+      totalLikesCount: blog.likes.length,
+      success: true,
+      message: "Blog liked successfully",
+      blog,
+    })
+  }catch (error) {
+    return next(error);
+  }
+};
 
 
 // Admin task 
@@ -159,7 +195,6 @@ const updateBlog = async (req, res, next) => {
 }
 
 
-
 // 5 Admin get their created blog 
 const getAdminBlog = async (req, res, next) => {
   try {
@@ -221,7 +256,7 @@ const deleteBlogById= async (req,res,next)=>{
   }
 }
 
-// deleteBlogs (Admin only do this )
+// 7 deleteBlogs (Admin only do this )
 const deleteBlogs = async(req,res,next)=>{
   try{
     // find all blogs of admin and delete them
@@ -247,4 +282,4 @@ const deleteBlogs = async(req,res,next)=>{
 }
 
 
-export {createBlog,getAllBlogs,getBlogById,updateBlog,getAdminBlog,deleteBlogById,deleteBlogs}
+export {createBlog,getAllBlogs,getBlogById,updateBlog,getAdminBlog,deleteBlogById,deleteBlogs,likeBlog}

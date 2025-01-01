@@ -6,6 +6,7 @@ import connectDb from './config/connectDb.js';
 import globalErrorHandler from './middleware/globalErrorHandler.js';
 import userRoute from './routes/userRoutes.js';
 import blogRoute from './routes/blogRoutes.js';
+import commentRoute from './routes/commentRoutes.js';
 import morgan from 'morgan';
 import fs from 'fs';
 import cookieParser from 'cookie-parser';
@@ -40,6 +41,7 @@ const baseApiUlr = '/api/v1';
 // user routes
 app.use(`${baseApiUlr}/user`,userRoute);
 app.use(`${baseApiUlr}/blog`,blogRoute);
+app.use(`${baseApiUlr}/comment`,commentRoute);
 
 //  handle error 
 app.use(globalErrorHandler);

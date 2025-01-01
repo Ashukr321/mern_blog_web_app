@@ -186,4 +186,38 @@ const getAdminBlog = async (req, res, next) => {
 
 
 // delete the blog (Admin only do this )
-export {createBlog,getAllBlogs,getBlogById,updateBlog,getAdminBlog}
+const deleteBlogById= async (req,res,next)=>{
+  try{
+    // get blog id 
+    const blogId = req.params.id;
+    // find blog by blogId 
+    const blog = await Blog.findById({_id:blogId});
+    // check blog is present or not 
+    if (!blog){
+      const err = new Error();
+      err.message = "Blog not found";
+      err.statusCode = 404;
+      return next(err);
+    }
+
+    // check authorized user is author of blog or not
+    if(blog.author.toString() !== req.userId.toString()){
+      const err = new Error();
+      err.message = "You are not authorized to delete this blog";
+      err.statusCode = 403;
+      return next(err);
+    }
+
+    // delete blog
+    await Blog.deleteOne({_id:blogId});
+    // send success response
+    res.status(200).json({
+      success:true,
+      message:"Blog deleted successfully"
+    })
+  
+  }catch(error){
+    return next(error);
+  }
+}
+export {createBlog,getAllBlogs,getBlogById,updateBlog,getAdminBlog,deleteBlogById}

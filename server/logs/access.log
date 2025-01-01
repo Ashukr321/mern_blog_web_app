@@ -528,3 +528,6 @@
 [0mGET /api/v1/blog/getAdminBlogs [32m200[0m 7.727 ms - 754[0m
 [0mGET /api/v1/blog/getAdminBlogs [32m200[0m 37.881 ms - 764[0m
 [0mGET /api/v1/blog/getAllBlogs [32m200[0m 6.636 ms - 1126[0m
+[0mDELETE /api/v1/blog/deleteBlog/67756e29a8b596342ea77df2 [32m200[0m 64.843 ms - 54[0m
+[0mDELETE /api/v1/blog/deleteBlog/67756f1fa8b596342ea77e03 [32m200[0m 10.563 ms - 54[0m
+[0mDELETE /api/v1/blog/deleteBlog/677539dbfef8ce4eb7022a73 [32m200[0m 9.115 ms - 69[0m

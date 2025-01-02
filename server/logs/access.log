@@ -599,3 +599,9 @@
 [0mGET /api/v1/user/profile [32m200[0m 3.535 ms - 42[0m
 [0mGET /api/v1/user/profile [32m200[0m 2.978 ms - 42[0m
 [0mGET /api/v1/user/profile [32m200[0m 9.104 ms - 188[0m
+[0mGET /api-docs/ [33m404[0m 3.011 ms - 148[0m
+[0mGET / [33m404[0m 0.438 ms - 139[0m
+[0mGET /user [33m404[0m 3.108 ms - 143[0m
+[0mGET /user [33m404[0m 0.657 ms - 143[0m
+[0mGET /user [33m404[0m 1.707 ms - 143[0m
+[0mPOST /api/v1/user/register [32m200[0m 3959.062 ms - 226[0m

@@ -10,10 +10,13 @@ import commentRoute from './routes/commentRoutes.js';
 import morgan from 'morgan';
 import fs from 'fs';
 import cookieParser from 'cookie-parser';
-import setupSwagger from './utils/swagger.js';
 import mongoSanitize from 'express-mongo-sanitize';
 import rateLimiting from './middleware/rateLimiting.js';
 import helmet from 'helmet';
+
+//  import swagger 
+import swaggerDoc from 'swagger-ui-express';
+import swaggerDocumentation from './helper/swaggerdocumentation.js'
 // create server 
 const app = express();
 
@@ -29,7 +32,10 @@ app.use(helmet());
 app.use(rateLimiting);
 app.use(mongoSanitize());
 app.use(cookieParser());
-setupSwagger(app);
+
+// swagger documentation
+app.use('/documentation',swaggerDoc.serve);
+app.use('/documentation',swaggerDoc.setup(swaggerDocumentation));
 
 
 // Middleware to parse URL-encoded data

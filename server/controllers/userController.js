@@ -8,7 +8,7 @@ import crypto from 'crypto';
 import { v2 as cloudinary } from 'cloudinary';
 import fs from 'fs';
 import Joi from "joi";
-import {userRegistrationValidation} from '../validation/userValidations.js';
+import {userRegistrationValidation,userLoginValidation,verifyOtp,forgetPasswordValidation} from '../validation/userValidations.js';
 
 // create user 
 const registerUser = async (req, res, next) => {
@@ -27,17 +27,7 @@ const registerUser = async (req, res, next) => {
     const password = reqBody.password;
     const role = reqBody.role;
 
-    //  check if user name, email, password and role is given or not
-    if (!userName) {
-      throw new Error("User name is required");
-    }
-    if (!email) {
-      throw new Error("Email is required");
-    }
-    if (!password) {
-      throw new Error("Password is required");
-    }
-    
+  
     // check if user name already exist or not
     const useExist = await User.findOne({ email: email });
     if (useExist) {
@@ -79,17 +69,14 @@ const registerUser = async (req, res, next) => {
 const loginUser = async (req, res, next) => {
   try {
     const { email, password } = req.body;
-    // check email and password is given or not 
-    if (!email) {
+
+    // validate user 
+    const {error} = userLoginValidation.validate(req.body);
+
+    if(error){
       const err = new Error();
       err.status = 401;
-      err.message = "Email is required";
-      return next(err);
-    }
-    if (!password) {
-      const err = new Error();
-      err.status = 401;
-      err.message = "Password is required";
+      err.message = error.details[0].message;
       return next(err);
     }
 
@@ -131,6 +118,13 @@ const loginUser = async (req, res, next) => {
 const verifyUser = async (req, res, next) => {
   try {
     const { email, otp } = req.body;
+    const {error}= verifyOtp.validate(req.body);
+    if (error) {
+      const err = new Error();
+      err.status = 401;
+      err.message = error.details[0].message;
+      return next(err);
+    }
     const user = await User.findOne({ email });
     // check user exist or not
     if (!user) {
@@ -139,6 +133,7 @@ const verifyUser = async (req, res, next) => {
       err.message = "User not found";
       return next(err);
     }
+
     // verify Otp 
     if (user.otp !== otp) {
       const err = new Error();
@@ -228,6 +223,15 @@ const forgetPassword = async (req, res, next) => {
   try {
     // get email 
     const { email } = req.body;
+    const { error } = forgetPasswordValidation.validate(req.body);
+    
+    if(error){
+      const err = new Error();
+      err.status = 401;
+      err.message = error.details[0].message;
+      return next(err)
+    }
+    
     // check user exist or not
     const user = await User.findOne({ email });
     // check user Exits or not 

@@ -8,7 +8,7 @@ import crypto from 'crypto';
 import { v2 as cloudinary } from 'cloudinary';
 import fs from 'fs';
 import Joi from "joi";
-import {userRegistrationValidation,userLoginValidation} from '../validation/userValidations.js';
+import {userRegistrationValidation,userLoginValidation,verifyOtp} from '../validation/userValidations.js';
 
 // create user 
 const registerUser = async (req, res, next) => {
@@ -118,6 +118,13 @@ const loginUser = async (req, res, next) => {
 const verifyUser = async (req, res, next) => {
   try {
     const { email, otp } = req.body;
+    const {error}= verifyOtp.validate(req.body);
+    if (error) {
+      const err = new Error();
+      err.status = 401;
+      err.message = error.details[0].message;
+      return next(err);
+    }
     const user = await User.findOne({ email });
     // check user exist or not
     if (!user) {
@@ -126,6 +133,7 @@ const verifyUser = async (req, res, next) => {
       err.message = "User not found";
       return next(err);
     }
+
     // verify Otp 
     if (user.otp !== otp) {
       const err = new Error();

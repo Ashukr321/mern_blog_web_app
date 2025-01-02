@@ -640,3 +640,6 @@
 [0mPOST /api/v1/user/register [32m200[0m 3.867 ms - 58[0m
 [0mPOST /api/v1/user/register [32m200[0m 0.657 ms - 58[0m
 [0mPOST /api/v1/user/register [32m200[0m 1.091 ms - 66[0m
+[0mPOST /api/v1/user/verifyUser [32m200[0m 44.030 ms - 38[0m
+[0mPOST /api/v1/user/verifyUser [32m200[0m 3.238 ms - 51[0m
+[0mPOST /api/v1/user/verifyUser [32m200[0m 3.849 ms - 68[0m

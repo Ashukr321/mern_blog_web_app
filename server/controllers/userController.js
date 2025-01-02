@@ -8,7 +8,7 @@ import crypto from 'crypto';
 import { v2 as cloudinary } from 'cloudinary';
 import fs from 'fs';
 import Joi from "joi";
-import {userRegistrationValidation,userLoginValidation,verifyOtp} from '../validation/userValidations.js';
+import {userRegistrationValidation,userLoginValidation,verifyOtp,forgetPasswordValidation} from '../validation/userValidations.js';
 
 // create user 
 const registerUser = async (req, res, next) => {
@@ -223,6 +223,15 @@ const forgetPassword = async (req, res, next) => {
   try {
     // get email 
     const { email } = req.body;
+    const { error } = forgetPasswordValidation.validate(req.body);
+    
+    if(error){
+      const err = new Error();
+      err.status = 401;
+      err.message = error.details[0].message;
+      return next(err)
+    }
+    
     // check user exist or not
     const user = await User.findOne({ email });
     // check user Exits or not 

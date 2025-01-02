@@ -16,46 +16,6 @@ const storage = multer.diskStorage({
 
 
 
-/**
- * @swagger
- * /register:
- *   post:
- *     summary: Register a new user with a file upload
- *     description: This endpoint allows for user registration along with a file upload.
- *     consumes:
- *       - multipart/form-data
- *     parameters:
- *       - in: String 
- *         name: userName
- *         type: string
- *         required: true
- *         description: This is the userName.
- *       - in: String
- *         name: email
- *         type: string
- *         required: true
- *         description: This is the email
- * 
- *       - in: String
- *         name: password
- *         type: string
- *         required: true
- *         description: This is the password
- *       - in: String
- *         name: role
- *         type: string
- *         required: true  
- *         description: This is the role of the user default role is user
- * 
- *         
- *     responses:
- *       200: 
- *        description: User created successfully
- *      
- *        content: 
- *       400:
- *        description:
- */
 
 const upload = multer({storage});
 router.post('/register',registerUser);

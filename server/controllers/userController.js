@@ -7,13 +7,21 @@ import envConfig from '../config/envConfig.js';
 import crypto from 'crypto';
 import { v2 as cloudinary } from 'cloudinary';
 import fs from 'fs';
-
-
+import Joi from "joi";
+import {userRegistrationValidation} from '../validation/userValidations.js';
 
 // create user 
 const registerUser = async (req, res, next) => {
   try {
     const reqBody = req.body;
+    const {error}= userRegistrationValidation.validate(reqBody);
+    if (error) {
+      const err = new Error();
+      err.status = 401;
+      err.message = error.details[0].message;
+      return next(err);
+    }
+
     const userName = reqBody.userName;
     const email = reqBody.email;
     const password = reqBody.password;
@@ -30,7 +38,6 @@ const registerUser = async (req, res, next) => {
       throw new Error("Password is required");
     }
     
-
     // check if user name already exist or not
     const useExist = await User.findOne({ email: email });
     if (useExist) {

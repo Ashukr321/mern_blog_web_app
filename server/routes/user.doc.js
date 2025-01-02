@@ -1,5 +1,6 @@
 
 
+//  register user
 const registerUser = {
   tags: ["User"],
   description: "create the user account",
@@ -56,11 +57,44 @@ const registerUser = {
   }
 }
 
+// login user 
+
+const loginUser = {
+  tags: ["User"],
+  description: "login user with email and password  you got otp on your email for verification", 
+  requestBody: {
+    content: {
+      "application/json": {
+        schema: {
+          type: "object",
+          properties: {
+            email: {
+              type: "string",
+              description: "email",
+              example: "test@gmail.com"
+            },
+            password: {
+              type: "string",
+              description: "password",
+              example: "Test@321"
+            }
+          }
+        }
+      }
+    },
+   
+  },
+}
+
 
 const userDocsRoutes = {
   "/user/register": {
     post: registerUser
+  },
+  "/user/login": {
+    post: loginUser
   }
+  
 }
 
 export default userDocsRoutes;

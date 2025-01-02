@@ -1,4 +1,5 @@
 import userDocsRoutes from "../routes/user.doc.js";
+import envConfig from "../config/envConfig.js";
 //  create the object
 const swaggerDocumentation = {
   openapi: '3.0.0',
@@ -9,11 +10,11 @@ const swaggerDocumentation = {
   },
   servers:[
     {
-      url:`http://localhost:8080/api/v1/`,
+      url:`${envConfig.client_url}/api/v1`,
       description:"local server"
     },
     {
-      url:"http://localhost:8080",
+      url:`${envConfig.production_url}/api/v1`,
       description:"production server"
     },
   ],

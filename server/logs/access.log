@@ -636,3 +636,7 @@
 [0mPOST /api/v1/user/register [32m200[0m 5.061 ms - 73[0m
 [0mPOST /api/v1/user/register [32m200[0m 1.046 ms - 139[0m
 [0mPOST /api/v1/user/register [32m200[0m 3.326 ms - 58[0m
+[0mPOST /api/v1/user/login [32m200[0m 6.842 ms - 139[0m
+[0mPOST /api/v1/user/register [32m200[0m 3.867 ms - 58[0m
+[0mPOST /api/v1/user/register [32m200[0m 0.657 ms - 58[0m
+[0mPOST /api/v1/user/register [32m200[0m 1.091 ms - 66[0m

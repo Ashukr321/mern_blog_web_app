@@ -8,7 +8,7 @@ import crypto from 'crypto';
 import { v2 as cloudinary } from 'cloudinary';
 import fs from 'fs';
 import Joi from "joi";
-import {userRegistrationValidation} from '../validation/userValidations.js';
+import {userRegistrationValidation,userLoginValidation} from '../validation/userValidations.js';
 
 // create user 
 const registerUser = async (req, res, next) => {
@@ -27,17 +27,7 @@ const registerUser = async (req, res, next) => {
     const password = reqBody.password;
     const role = reqBody.role;
 
-    //  check if user name, email, password and role is given or not
-    if (!userName) {
-      throw new Error("User name is required");
-    }
-    if (!email) {
-      throw new Error("Email is required");
-    }
-    if (!password) {
-      throw new Error("Password is required");
-    }
-    
+  
     // check if user name already exist or not
     const useExist = await User.findOne({ email: email });
     if (useExist) {
@@ -79,17 +69,14 @@ const registerUser = async (req, res, next) => {
 const loginUser = async (req, res, next) => {
   try {
     const { email, password } = req.body;
-    // check email and password is given or not 
-    if (!email) {
+
+    // validate user 
+    const {error} = userLoginValidation.validate(req.body);
+
+    if(error){
       const err = new Error();
       err.status = 401;
-      err.message = "Email is required";
-      return next(err);
-    }
-    if (!password) {
-      const err = new Error();
-      err.status = 401;
-      err.message = "Password is required";
+      err.message = error.details[0].message;
       return next(err);
     }
 
